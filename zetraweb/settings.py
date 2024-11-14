@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'category',
     'accounts',
     'products',
+    'cart',
+    "template_partials",
 ]
 
 MIDDLEWARE = [
@@ -66,6 +68,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processor.menu_link',
+                'cart.context_processors.counter',
+                
             ],
         },
     },
@@ -131,3 +135,5 @@ MEDIA_ROOT = BASE_DIR /'media'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+PAGE_SIZE = 4

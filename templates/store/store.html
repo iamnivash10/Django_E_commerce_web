@@ -1,12 +1,10 @@
 {% extends "base.html" %} 
+
 {% load static %}
+{% load partials %}
 {% block content%}
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
-    <div class="container">
-        <h2 class="title-page">Our Store</h2>
-        
-    </div> <!-- container //  -->
     </section>
     <!-- ========================= SECTION INTRO END// ========================= -->
     
@@ -129,6 +127,7 @@
     </header><!-- sect-heading -->
     
     <div class="row">
+        {% partialdef inline-partial inline=True %}
         {% for product in products %}
         <div class="col-md-4">
             <figure class="card card-product-grid">
@@ -144,11 +143,14 @@
                             <span class="price">{{product.price}}</span>
                         </div> <!-- price-wrap.// -->
                     </div>
-                    <a href="#" class="btn btn-block btn-primary">Added to cart </a>
+                    <a href={{product.get_urls}} class="btn btn-block btn-primary"> View Product </a>
                 </figcaption>
             </figure>
+
         </div> <!-- col.// -->
         {% endfor %}
+        {% endpartialdef %}
+        
     </div> <!-- row end.// -->
     
     
