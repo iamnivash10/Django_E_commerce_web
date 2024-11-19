@@ -1,0 +1,48 @@
+<head>
+</head>
+<body>
+<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+
+
+{% block content %}
+{%if products %}
+{% for product in products %}
+<div class="col-md-4">
+    <!-- Product Card -->
+    <figure class="card card-product-grid">
+        <div class="img-wrap">
+            <a href="{{ product.get_urls }}">
+                <img src="{{ product.images.url }}" alt="{{ product.product_name }}">
+            </a>
+        </div> <!-- img-wrap.// -->
+        
+        <figcaption class="info-wrap">
+            <div class="fix-height">
+                <a href="{{ product.get_urls }}" class="title">{{ product.product_name }}</a>
+                <div class="price-wrap mt-2">
+                    <span class="price">{{ product.price }}</span>
+                </div> <!-- price-wrap.// -->
+            </div>
+            
+            <!-- View Product Button -->
+            <a href="{{ product.get_urls }}" class="btn btn-block btn-primary">View Product</a>
+        </figcaption>
+    </figure>
+</div> <!-- col.// -->
+{% endfor %}
+
+<div 
+    hx-get="{% url 'store' %}?page={{ page|add:1 }}" 
+    hx-trigger="revealed" 
+    hx-target="this" 
+    hx-indicator=".loading-spinner"
+    hx-swap="outerHTML"
+    hx-on:error="this.innerHTML = 'Error loading content, please try again.'">
+    <div class="loading-spinner" style="display: none;">Loading...</div>
+</div>
+
+{% else %}
+<h2> oops! no product found try it later </h2>
+{%endif%}
+{% endblock %}
+</body>

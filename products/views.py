@@ -5,7 +5,8 @@ from category.models import Category
 from cart.models import CartItem
 from cart.views import _cart_id
 from django.core.paginator import Paginator
-from zetraweb import settings
+from django.db.models import Q
+
 
 def store(request,category_slug = None):
     product = None
@@ -18,12 +19,18 @@ def store(request,category_slug = None):
                    "count":count}
     else:
 
-        products = Products.objects.all().filter(is_available = True)
+        products = Products.objects.all().filter(is_available = True).order_by("id")
         count = products.count()
-        aginator = Paginator(products,settings.PAGE_SIZE)
-        product_page = aginator.page(1)
-        context = {"products":product_page ,
-        "count":count}
+        paginator = Paginator(products,3)
+        product_page = int(request.GET.get('page',1))
+        products = paginator.page(product_page)
+
+        context = {"products":products ,
+        "count":count,
+        "page": product_page}
+
+    if request.htmx:
+        return render(request,'store/store_products.html',context)
 
     return render(request,'store/store.html',context)
 
@@ -33,15 +40,14 @@ def product_page(request, category_slug, product_slug):
         is_cart = CartItem.objects.filter(product = single_product_detail,cart__cart_id = _cart_id(request))
     except Exception as e:
         raise e
+        
     context = {"single_product_detail":single_product_detail,"is_cart":is_cart}
     return render(request,'store/single_product.html',context)
 
-def load_more_products(request):
-    page = request.GET.get('page',1)
-    products = Products.objects.all().filter(is_available = True)
-    count = products.count()
-    paginator = Paginator(products,settings.PAGE_SIZE)
-    context = {"products":paginator.page(page) ,
-        "count":count}
-
-    return render(request,'store/store.html#product_list',context)
+def search(request):
+    keyword = request.GET['keyword']
+    if keyword:
+        products = Products.objects.filter(Q(description__icontains = keyword) or Q(product_name__icontains = keyword,is_available = True))
+        product_count = products.count()
+    context = {"products":products,"count":product_count}
+    return render(request,'store/store.html',context)
